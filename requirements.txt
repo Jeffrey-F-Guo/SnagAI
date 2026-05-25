@@ -4,3 +4,4 @@ resend
 uvicorn
 pydantic
 email-validator
+psycopg2-binary
