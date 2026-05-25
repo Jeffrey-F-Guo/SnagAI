@@ -41,7 +41,7 @@ def send_mail(target_email: EmailAddr) -> Dict:
 
         if should_send:
             params: resend.Emails.SendParams = {
-                "from": "SnagAI <onboarding@resend.dev>",
+                "from": "SnagAI <noreply@snag-ai.app>",
                 "to": [target_email.email],
                 "subject": "You're on the list — thanks for signing up for SnagAI",
                 "html": """
