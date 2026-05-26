@@ -2,7 +2,6 @@ import os
 from typing import Dict
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 import resend
 from pydantic import BaseModel, EmailStr
@@ -11,19 +10,8 @@ import psycopg2
 load_dotenv()
 resend.api_key = os.getenv("RESEND_API_KEY")
 DATABASE_URL = os.getenv("DATABASE_URL")
-origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:8000").split(',')
-
-# debugging
-print(origins)
 
 app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_methods=["POST"],
-    allow_headers=["Content-Type"],
-)
 
 class EmailAddr(BaseModel):
     email: EmailStr
