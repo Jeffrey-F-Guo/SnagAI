@@ -3,31 +3,34 @@ from typing import Dict
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from mangum import Mangum
 import resend
 from pydantic import BaseModel, EmailStr
 import psycopg2
 
-
 load_dotenv()
 resend.api_key = os.getenv("RESEND_API_KEY")
 DATABASE_URL = os.getenv("DATABASE_URL")
+origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:8000").split(',')
+
+# debugging
+print(origins)
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_methods=["POST"],
     allow_headers=["Content-Type"],
 )
-
 
 class EmailAddr(BaseModel):
     email: EmailStr
 
 @app.post("/signup")
 def send_mail(target_email: EmailAddr) -> Dict:
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = psycopg2.connect(DATABASE_URL, connect_timeout=10)
     cursor = conn.cursor()
     try:
         cursor.execute("INSERT INTO email_list (email) VALUES (%s) ON CONFLICT (email) DO NOTHING", (target_email.email,))
@@ -64,3 +67,5 @@ def send_mail(target_email: EmailAddr) -> Dict:
     finally:
         cursor.close()
         conn.close()
+
+handler = Mangum(app, api_gateway_base_path="/prod")

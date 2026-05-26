@@ -241,7 +241,7 @@
       status.className = 'status';
 
       try {
-        const res = await fetch('http://localhost:8000/signup/', {
+        const res = await fetch('https://xbd897wkn2.execute-api.us-west-1.amazonaws.com/prod/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email }),
